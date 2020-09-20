@@ -22,7 +22,7 @@ class PercentualDeProducaoPorRegiao(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     regiao = Column(String(20))
     producao = Column(Integer)
-    percentual = Column(Numeric)
+    percentual = Column(Numeric(7, 2))
 
 
 class MediaDaAreaProdutivaPorEstado(Base):
