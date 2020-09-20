@@ -1,0 +1,4 @@
+config
+/venv/
+cloud_sql_proxy
+/cloudsql
