@@ -2,7 +2,7 @@ from decimal import Decimal
 from unittest.case import TestCase
 
 from app.producao_agricola.pipeline import obter_dados_de_producao_agricola_do_xlsx, PERIODO_2019_MEDIA_ATE_ABRIL, \
-    obter_percentual_de_participacao_por_regiao
+    obter_percentual_de_participacao_por_regiao, obter_media_da_area_produtiva, obter_media_de_producao_por_estado
 
 
 class ObterDadosDeProducaoAgricolaDoXLSXTests(TestCase):
@@ -60,3 +60,49 @@ class ObterPercentualDeParticipacaoPorPeriodoTests(TestCase):
         ][0]
         self.assertEqual(Decimal('14.29'), percentual_sul['percentual'])
         self.assertEqual(Decimal('5'), percentual_sul['producao'])
+
+
+class ObterMediaDaAreaProdutivaTests(TestCase):
+    def test_retorna_media(self):
+        producao_agricola = [
+            {'uf': 'Santa Catarina', 'area': Decimal('10')},
+            {'uf': 'Santa Catarina', 'area': Decimal('15')},
+            {'uf': 'São Paulo', 'area': Decimal('20')}
+        ]
+
+        media_retornada = obter_media_da_area_produtiva(producao_agricola)
+
+        self.assertEqual(2, len(media_retornada))
+        media_santa_catarina = [
+            percentual for percentual in media_retornada
+            if percentual['uf'] == 'Santa Catarina'
+        ][0]
+        self.assertEqual(Decimal('12.50'), media_santa_catarina['media'])
+        media_sao_paulo = [
+            percentual for percentual in media_retornada
+            if percentual['uf'] == 'São Paulo'
+        ][0]
+        self.assertEqual(Decimal('20'), media_sao_paulo['media'])
+
+
+class ObterMediaDeProducaoTests(TestCase):
+    def test_retorna_media(self):
+        producao_agricola = [
+            {'uf': 'Santa Catarina', 'producao': Decimal('50')},
+            {'uf': 'Santa Catarina', 'producao': Decimal('75')},
+            {'uf': 'São Paulo', 'producao': Decimal('89')}
+        ]
+
+        media_retornada = obter_media_de_producao_por_estado(producao_agricola)
+
+        self.assertEqual(2, len(media_retornada))
+        media_santa_catarina = [
+            percentual for percentual in media_retornada
+            if percentual['uf'] == 'Santa Catarina'
+        ][0]
+        self.assertEqual(Decimal('62.50'), media_santa_catarina['media'])
+        media_sao_paulo = [
+            percentual for percentual in media_retornada
+            if percentual['uf'] == 'São Paulo'
+        ][0]
+        self.assertEqual(Decimal('89'), media_sao_paulo['media'])
