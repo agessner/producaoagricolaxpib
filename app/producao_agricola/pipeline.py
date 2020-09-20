@@ -1,5 +1,8 @@
 import os
+from decimal import Decimal
 
+from app.listas import indexar_lista
+from app.numeros import arredondar_decimal
 from app.producao_agricola.estados_enum import REGIOES_POR_ESTADO
 from app.gateways import obter_engine
 from app.producao_agricola.gateways import carregar_dados_de_producao_agricola_no_bd, recriar_tabelas_no_bd
@@ -27,6 +30,8 @@ def executar():
     recriar_tabelas_no_bd(engine)
     producao_agricola = obter_dados_de_producao_agricola_do_xlsx()
     carregar_dados_de_producao_agricola_no_bd(engine, producao_agricola)
+    participacao_por_regiao = obter_percentual_de_participacao_por_regiao(producao_agricola)
+    carregar_dados_de_participacao_por_regiao_no_bd(engine, participacao_por_regiao)
 
 
 def obter_dados_de_producao_agricola_do_xlsx():
@@ -61,4 +66,28 @@ def _criar_linhas_para_inserir_na_tabela(estados, areas, producoes, periodo):
         }
         for estado, area, producao
         in zip(estados, areas, producoes)
+    ]
+
+
+def obter_percentual_de_participacao_por_regiao(producao_agricola):
+    lista_de_producao_indexada_por_regiao = indexar_lista(
+        producao_agricola,
+        fn_chave=lambda producao: producao['regiao']
+    )
+    soma_total_de_producao = sum(producao['producao'] for producao in producao_agricola)
+    soma_de_producao_por_regiao = {
+        regiao: sum(producao['producao'] for producao in lista_de_producao_indexada_por_regiao[regiao])
+        for regiao
+        in lista_de_producao_indexada_por_regiao
+    }
+    return [
+        {
+            'regiao': regiao,
+            'producao': soma_de_producao_por_regiao[regiao],
+            'percentual': arredondar_decimal(
+                soma_de_producao_por_regiao[regiao] / soma_total_de_producao * Decimal('100')
+            )
+        }
+        for regiao
+        in soma_de_producao_por_regiao
     ]

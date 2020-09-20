@@ -16,6 +16,15 @@ class ProducaoAgricola(Base):
     producao = Column(Integer)
 
 
+class PercentualDeProducaoPorRegiao(Base):
+    __tablename__ = 'percentual_de_producao_por_regiao'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    regiao = Column(String(20))
+    producao = Column(Integer)
+    percentual = Column(Numeric)
+
+
 class MediaDaAreaProdutivaPorEstado(Base):
     __tablename__ = 'media_da_area_produtiva_por_estado'
 
@@ -38,3 +47,7 @@ def recriar_tabelas_no_bd(engine):
 
 def carregar_dados_de_producao_agricola_no_bd(engine, dados):
     gateways.carregar_dados(engine, ProducaoAgricola, dados)
+
+
+def carregar_dados_de_participacao_por_regiao_no_bd(engine, dados):
+    gateways.carregar_dados(engine, PercentualDeProducaoPorRegiao, dados)
