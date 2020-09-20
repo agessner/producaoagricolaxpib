@@ -1,7 +1,8 @@
 import os
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 
 from app.gateways import obter_engine
+from app.numeros import arredondar_decimal
 from app.pib.gateways import recriar_tabelas_no_bd, carregar_dados_do_pib_no_bd
 from app.structs import ColunaXLSXConfig
 from app.xlsx import obter_pagina_de_arquivo, obter_valores_da_coluna
@@ -85,12 +86,6 @@ def _obter_pib(pagina, tipo, segmento, categoria, coluna_config):
 
 def _converter_valores_numericos(valores):
     return [arredondar_decimal(Decimal(valor)) for valor in valores]
-
-
-def arredondar_decimal(numero, casas_decimais=2, rounding=ROUND_HALF_UP):
-    precisao = Decimal('1.{0}'.format('0' * casas_decimais))
-
-    return numero.quantize(precisao, rounding)
 
 
 def _criar_linhas(anos, tipo, segmento, categoria, valores):
