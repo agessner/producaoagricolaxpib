@@ -5,7 +5,8 @@ from app.listas import indexar_lista
 from app.numeros import arredondar_decimal
 from app.producao_agricola.estados_enum import REGIOES_POR_ESTADO
 from app.gateways import obter_engine
-from app.producao_agricola.gateways import carregar_dados_de_producao_agricola_no_bd, recriar_tabelas_no_bd
+from app.producao_agricola.gateways import carregar_dados_de_producao_agricola_no_bd, recriar_tabelas_no_bd, \
+    carregar_dados_de_participacao_por_regiao_no_bd
 from app.structs import ColunaXLSXConfig
 from app.xlsx import obter_pagina_de_arquivo, obter_valores_da_coluna
 
@@ -74,9 +75,9 @@ def obter_percentual_de_participacao_por_regiao(producao_agricola):
         producao_agricola,
         fn_chave=lambda producao: producao['regiao']
     )
-    soma_total_de_producao = sum(producao['producao'] for producao in producao_agricola)
+    soma_total_de_producao = Decimal(sum(producao['producao'] for producao in producao_agricola))
     soma_de_producao_por_regiao = {
-        regiao: sum(producao['producao'] for producao in lista_de_producao_indexada_por_regiao[regiao])
+        regiao: Decimal(sum(producao['producao'] for producao in lista_de_producao_indexada_por_regiao[regiao]))
         for regiao
         in lista_de_producao_indexada_por_regiao
     }
