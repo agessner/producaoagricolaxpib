@@ -1,1 +1,5 @@
 /venv/
+.env
+fifaeng-c8403084b672.json
+cloud_sql_proxy
+cloud_sql/
